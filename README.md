@@ -2,7 +2,6 @@
 Dexter for Sem-6 project
 
 Features and commands():
-
 - Speech Recognition using Speech Recognition Library.
 - Image Recognition using the YOLO v8 model. (Detect objects around me)
 - Image Generation using the DALLe Image generator. (Generate image of ...)
