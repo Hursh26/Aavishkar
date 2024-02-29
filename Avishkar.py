@@ -641,10 +641,9 @@ def gpt(Query,do=None):
             "presence_penalty": 0,
             "frequency_penalty": 0,
         }
-        # "Authorization": f"Bearer sk - vZTTOhHhjZmvPHEQRRfaT3BlbkFJcUfRM5T96TPccm5UU3Me"
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer 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"
+            "Authorization": f"Bearer YOUR_OPENAI_API_KEY"
 
         }
 
