@@ -652,7 +652,7 @@ def generate_image(image_prompt):
         }
     headers={
         "Content-Type":"application/json",
-        "Authorization": f"Bearer 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"
+        "Authorization": f"Bearer YOUR_OPENAI_API_KEY"
         }
 
     print('generating your content... \nThis may take a while')
@@ -725,7 +725,7 @@ def play_song(music_name):
 
     pygame.mixer.init()
 
-    api_key = "AIzaSyDJC2UQ_0Kaz0Gv1t8LPkHkhf4V_E6_yiQ"
+    api_key = "YOUR_YOUTUBE_API_KEY"
     youtube = build('youtube', 'v3', developerKey=api_key)
 
     request = youtube.search().list(
@@ -1016,11 +1016,7 @@ def gpt(Query,do=None):
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer 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"
-
-
-            # "Authorization": f"Bearer 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"
-
+            "Authorization": f"Bearer YOUR_OPENAI_API_KEY"
         }
 
         if do=='analyze':
