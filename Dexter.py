@@ -1,4 +1,3 @@
-
 import speech_recognition as recognize
 import os
 import requests
@@ -37,8 +36,7 @@ import pickle
 import tkinter
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog
-from tkinter import Tk, Canvas, Text, Button, PhotoImage, simpledialog,messagebox
+from tkinter import filedialog, Tk, Canvas, Text, Button, PhotoImage, simpledialog,messagebox
 
 # Assistant feature imports
 import webbrowser as wb
@@ -47,20 +45,20 @@ import AppOpener
 
 #global variables
 chat = ""
-mouse=Controller()
-actions=[] #Variable to store user performed clicks
+mouse = Controller()
+actions = []    # Variable to store user performed clicks
 
-#image generator
+# image generator
 image1_data, image2_data = "", ""
-image_label_1,image_label_2="",""
+image_label_1, image_label_2 = "", ""
 
-#muisc player
-video_name=[]
-exit_mixer=False
-music_status=""
+# music player
+video_name = []
+exit_mixer = False
+music_status = ""
 
-speak_flag=0
-gpt_in_use=0
+speak_flag = 0
+gpt_in_use = 0
 
 # defining the dictionary which has website url
 websites = {
@@ -91,7 +89,7 @@ websites = {
     "gst": "https://services.gst.gov.in/services/login"
 }
 
-#setting Path for source files
+# setting Path for source files
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets\frame0")
 
@@ -109,7 +107,7 @@ def relative_to_assets(path: str) -> Path:
 
 window = Tk()
 
-window.geometry("1312x602") #window width and height
+window.geometry("1312x602") # window width and height
 window.configure(bg="#000099")
 
 
@@ -142,7 +140,7 @@ height=50
 content_frame = tk.Frame(scroll,height=height,width=350,bg="#000099")
 scroll.create_window((4,4), window=content_frame,  anchor="nw")
 
-#AI Image
+# AI Image
 canvas.place(x=0, y=0)
 image_image_1 = PhotoImage(file=relative_to_assets("image_1.png"))
 image_1 = canvas.create_image(
@@ -151,7 +149,7 @@ image_1 = canvas.create_image(
     image=image_image_1
 )
 
-#Listening text
+# Listening text
 canvas.create_text(
     479.0,
     396.0,
@@ -162,11 +160,12 @@ canvas.create_text(
     tags='status'
 )
 
-def set_status(current):
-    canvas.after(0,lambda: canvas.itemconfig('status', text=current))
-    print("Status setted as",current)
 
-#code to display options
+def set_status(current):
+    canvas.after(0, lambda: canvas.itemconfig('status', text=current))
+    print("Status setted as", current)
+
+# code to display options
 def show_options():
     canvas = Canvas(
         window,
@@ -192,7 +191,6 @@ def show_options():
         width=219.0,
         height=34.0
     )
-
     option_button_2 = Button(
         text='play recorded actions',
         borderwidth=2,
@@ -220,7 +218,6 @@ def show_options():
         width=219.0,
         height=34.0
     )
-
     option_button_4 = Button(
         text='Close',
         borderwidth=2,
@@ -235,7 +232,8 @@ def show_options():
         height=34.0
     )
 
-def close_options(canvas,button1,button2,button3,button4):
+
+def close_options(canvas, button1, button2, button3, button4):
     canvas.destroy()
     button1.destroy()
     button2.destroy()
@@ -247,17 +245,17 @@ def browse_folder():
     return folder_path
 
 def choose_playback_file(location):
-   file = filedialog.askopenfile(initialdir=f'{location}/',mode='rb')
-   if file:
-      content = pickle.load(file)
-      file.close()
-      return content
+    file = filedialog.askopenfile(initialdir=f'{location}/',mode='rb')
+    if file:
+        content = pickle.load(file)
+        file.close()
+        return content
 
 def choose_file(location):
-   file = filedialog.askopenfile(initialdir=f'{location}/',mode='r')
-   if file:
-       os.startfile(file.name)
-       file.close()
+    file = filedialog.askopenfile(initialdir=f'{location}/',mode='r')
+    if file:
+        os.startfile(file.name)
+        file.close()
 
 def open_File(location):
     threading.Thread(target=choose_file,args=(location,)).start()
@@ -279,14 +277,15 @@ button_1.place(
 )
 
 
-#Code for input field
+# Code for input field
 canvas.create_rectangle(
     30.0,
     490.0,
     1270.0,
     550.0,
     fill="#B1B1B1",
-    outline="")
+    outline=""
+)
 
 entry_image_2 = PhotoImage(file=relative_to_assets2("entry_1.png"))
 entry_bg_2 = canvas.create_image(
@@ -308,9 +307,9 @@ entry_2.place(
 )
 
 # code to display User Input
-Qx=20.0
-Ay=10.0
-previousy=24.0
+Qx = 20.0
+Ay = 10.0
+previousy = 24.0
 def generate_label(text,bgcolor,textcolor,x):
     global previousy, height
 
@@ -319,8 +318,8 @@ def generate_label(text,bgcolor,textcolor,x):
     label.place(x=x, y=previousy)
     label.config(text=f"{text}")
 
-    newy=label.winfo_reqheight()
-    previousy=previousy + 10.0+newy
+    newy = label.winfo_reqheight()
+    previousy = previousy + 10.0+newy
 
     height += 10.0 + newy
 
@@ -368,7 +367,7 @@ button_2.place(
 window.resizable(False, False)
 
 
-#Key Logger
+# Key Logger
 def on_key_press(key):
     try:
         actions.append(('keyboard', 'press', key.char.lower()))
@@ -385,17 +384,17 @@ def on_key_release(key):
 
 def on_mouse_click(x, y, button, pressed):
     if pressed:
-        x,y=mouse.position
+        x, y = mouse.position
         print(actions)
-        actions.append(('mouse', 'click', (x,y, button)))
+        actions.append(('mouse', 'click', (x, y, button)))
 
 
 def playback():
-    global playback_button,actions
+    global playback_button, actions
     # Playback
     speak("Please select the recording you want me to play")
     logs = choose_playback_file('Saved-logs')
-    if logs==None:
+    if logs == None:
         messagebox.showinfo("gpt-5", "No files selected")
     else:
         print(logs)
@@ -430,11 +429,11 @@ def playback():
 # playback_button = tk.Button(window, text="start playback", command=playback)
 keyboard_listener = KeyboardListener(on_press=on_key_press,on_release=on_key_release)
 mouse_listener = MouseListener(on_click=on_mouse_click)
-stop_button=None
-recording_window=None
+stop_button = None
+recording_window = None
 
 def start():
-    global stop_button,recording_window
+    global stop_button, recording_window
     keyboard_listener.start()
     mouse_listener.start()
 
@@ -443,9 +442,9 @@ def start():
     recording_window.geometry("1312x602")  # window width and height
     recording_window.configure(bg="#0C257E")
 
-    #specifying position for tkinter window to open up
+    # specifying position for tkinter window to open up
     recording_window.geometry("100x70+10+10")
-    #tkinter window will be on top even if other window is clicked
+    # tkinter window will be on top even if other window is clicked
     recording_window.attributes("-topmost", True)
 
     # Pack the button widget onto the window
@@ -461,16 +460,17 @@ def start():
     keyboard_listener.join()
     mouse_listener.join()
 
+
 def stop_listener():
     global actions
     keyboard_listener.stop()
     mouse_listener.stop()
     time.sleep(1)
     actions.pop(-1)
-    speak( "Give the name with which you would like to save the logs")
+    speak("Give the name with which you would like to save the logs")
 
-    file_path = filedialog.asksaveasfilename(title="Save Chat",initialdir="Saved-logs",confirmoverwrite=True,defaultextension='.pkl')
-    log_file=os.path.basename(file_path)
+    file_path = filedialog.asksaveasfilename(title="Save Chat", initialdir="Saved-logs", confirmoverwrite=True, defaultextension='.pkl')
+    log_file = os.path.basename(file_path)
 
     time.sleep(5)
     with open(f"Saved-logs/{log_file}", "wb") as f:
@@ -481,7 +481,7 @@ def stop_listener():
     speak(f"recording save as {log_file}")
 
 
-#image Recognition
+# image Recognition
 def generate_description():
     input_value = messagebox.askyesno("Records", "Do you want to give image from camera?")
 
@@ -510,7 +510,7 @@ def object_from_image():
 
         model = YOLO('yolov8n.pt')
         for image in image_files:
-            results=model(f'{image}', show=False)
+            results = model(f'{image}', show=False)
             names = model.names
             for r in results:
                 for c in r.boxes.cls:
@@ -548,7 +548,7 @@ def object_from_video():
                 x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
                 for c in box.cls:
-                    if (names[int(c)] not in detected_objects):
+                    if names[int(c)] not in detected_objects:
                         detected_objects.append(names[int(c)])
         print(detected_objects)
         key = cv2.waitKey(1)
@@ -557,13 +557,13 @@ def object_from_video():
     cap.release()
     cv2.destroyAllWindows()
     print('objects detected')
-    speak("objeccts Detected! Please choose a folder where you want your description to be saved")
+    speak("objects Detected! Please choose a folder where you want your description to be saved")
     path = browse_folder()
     speak("Generating description for you...!")
     respond(f"generate some description for all the objects in this list: {detected_objects}", path)
 
 
-#image generator Code
+# image generator Code
 def ProcessImage1(response):
     global image1_data
     print("processing image 1")
@@ -576,6 +576,7 @@ def ProcessImage1(response):
 
     print("image1 loaded")
 
+
 def ProcessImage2(response):
     global image2_data
     print("Processing Image 2")
@@ -585,6 +586,7 @@ def ProcessImage2(response):
         image2_data = requests.get(image_url2)
         file.write(image2_data.content)
     print("image2 loaded")
+
 
 def download_image1(image_prompt):
     filename = f"Generated Images/{image_prompt}.jpg"
@@ -620,7 +622,7 @@ def download_image2(image_prompt):
         file.write(image2_data.content)
 
 def update_labels():
-    global image_label_1,image_label_2
+    global image_label_1,  image_label_2
 
     image_width = 400
     image_height = 400
@@ -645,26 +647,26 @@ def generate_image(image_prompt):
 
     image_generator_URL = 'https://api.openai.com/v1/images/generations'
 
-    payload={
+    payload = {
         "prompt": image_prompt,
         "n": 2,
         "size": "1024x1024"
         }
-    headers={
-        "Content-Type":"application/json",
-        "Authorization": f"Bearer YOUR_OPENAI_API_KEY"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer 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"
         }
 
     print('generating your content... \nThis may take a while')
     set_status("Hold i am cooking up your image")
-    response = requests.post(image_generator_URL,headers=headers,json=payload, stream=False)
+    response = requests.post(image_generator_URL, headers=headers, json=payload, stream=False)
     print(response)
     print(json.loads(response.content.decode()))
 
 
     try:
-        image1=threading.Thread(target=ProcessImage1,args=(response,), daemon=True)
-        image2=threading.Thread(target=ProcessImage2,args=(response,), daemon=True)
+        image1 = threading.Thread(target=ProcessImage1,args=(response,), daemon=True)
+        image2 = threading.Thread(target=ProcessImage2,args=(response,), daemon=True)
 
         image1.start()
         image2.start()
@@ -678,10 +680,9 @@ def generate_image(image_prompt):
 
 
 def create_image(image_prompt):
-    global image_label_1,image_label_2
+    global image_label_1, image_label_2
     if not os.path.exists("Generated Images"):
         os.mkdir("Generated Images")
-
 
     # Create the main window
     image_window = tk.Toplevel()
@@ -701,7 +702,6 @@ def create_image(image_prompt):
     image_label_2 = tkinter.Label(image_window,text="Rendering your image please wait")
     image_label_2.place(x=550, y=10)
 
-
     # Create the buttons
     save_button_1 = Button(image_window, text="Save Image", command=lambda: download_image1(image_prompt))
     save_button_1.place(x=250, y=430)
@@ -712,10 +712,11 @@ def create_image(image_prompt):
     save_button_2 = Button(image_window, text="Save Image", command=lambda: download_image2(image_prompt))
     save_button_2.place(x=700, y=430)
 
-    #generate image
-    threading.Thread(target=generate_image,args=(image_prompt,),daemon=True).start()
+    # generate image
+    threading.Thread(target=generate_image,args=(image_prompt,), daemon=True).start()
 
-#music Player Code
+
+# music Player Code
 def set_music_status(text):
     music_status.config(text=text)
 
@@ -725,7 +726,7 @@ def play_song(music_name):
 
     pygame.mixer.init()
 
-    api_key = "YOUR_YOUTUBE_API_KEY"
+    api_key = "AIzaSyDJC2UQ_0Kaz0Gv1t8LPkHkhf4V_E6_yiQ"
     youtube = build('youtube', 'v3', developerKey=api_key)
 
     request = youtube.search().list(
@@ -785,7 +786,7 @@ def play_song(music_name):
         set_music_status(f"Playing:{video_name[0]}")
 
         # Wait for the audio to finish playing or if paused/stopped
-        while (pygame.mixer.music.get_busy() or not exit_mixer):
+        while pygame.mixer.music.get_busy() or not exit_mixer:
             pygame.time.Clock().tick(10)
 
         # Stop pygame mixer
@@ -801,14 +802,14 @@ def play_song(music_name):
 def pause_music(action):
     global exit_mixer
 
-    if action=="pause":
+    if action == "pause":
         try:
             pygame.mixer.music.pause()
             set_music_status(f"Paused: {video_name[0]}")
         except Exception as e:
             print(e)
 
-    if action=="play":
+    if action == "play":
         try:
             pygame.mixer.music.unpause()
             set_music_status(f"Playing: {video_name[0]}")
@@ -845,9 +846,9 @@ def start_music(song_name):
     music_status = tkinter.Label(frame, text="Ideal")
     music_status.grid(row=3, column=0, columnspan=4, pady=5)
 
-    if song_name!="":
+    if song_name != "":
         threading.Thread(target=play_song, args=(song_name,), daemon=True).start()
-        song_name=""
+        song_name = ""
 
     # Create and pack the play button
     button_play = Button(frame, text="Play",
@@ -874,7 +875,7 @@ def start_music(song_name):
 def scrapper(url,path):
 
     r = requests.get(url)
-    path=path+r'\data.txt'
+    path = path+r'\data.txt'
     soup = BeautifulSoup(r.text, 'html.parser')
 
     # Find all text elements in the parsed HTML
@@ -884,13 +885,13 @@ def scrapper(url,path):
     full_text = "\n".join(text_elements).strip()
     print(full_text)
 
-    response,do,ai=gpt(f'analyze this website data:"{full_text}" \n\nreturn me full analysis when you are done analyzing','analyze')
+    response, do, ai = gpt(f'analyze this website data:"{full_text}" \n\nreturn me full analysis when you are done analyzing','analyze')
     response = json.loads(response.content.decode())['choices'][0]['message']['content']
 
     speak("Enter your file name")
 
     file_path = filedialog.asksaveasfilename(title="analyzed data",initialdir="website-analysis",confirmoverwrite=True,defaultextension=".txt")
-    file_name=os.path.basename(file_path)
+    file_name = os.path.basename(file_path)
 
     with open(f"website-analysis/{file_name}", "w") as f:
         f.write(response)
@@ -905,12 +906,12 @@ def scrapper(url,path):
         f.close()
 
 
-#GPT Interaction
+# GPT Interaction
 def command():
     r = recognize.Recognizer()
     with recognize.Microphone() as source:
 
-        if speak_flag == 0 and gpt_in_use == 0: #do not update the status if gpt is generating content or speaking
+        if speak_flag == 0 and gpt_in_use == 0: # do not update the status if gpt is generating content or speaking
             set_status("Listening...")
         print("Listening...")
         # r.pause_threshold = 2
@@ -918,41 +919,41 @@ def command():
         try:
             audio = r.listen(source)  # Add timeout to limit listening time
 
-            if speak_flag == 0 and gpt_in_use == 0: #do not update the status if gpt is generating content or speaking
+            if speak_flag == 0 and gpt_in_use == 0:  # do not update the status if gpt is generating content or speaking
                 set_status('Recognising...')
 
             query = r.recognize_google(audio, language="en-in")
-            if speak_flag == 0 and gpt_in_use == 0:  #do not update the status if gpt is generating content or speaking
+            if speak_flag == 0 and gpt_in_use == 0:  # do not update the status if gpt is generating content or speaking
                 set_status("Recognized!")
 
-            generate_label(query,'red','white',Qx)
+            generate_label(query, 'red', 'white', Qx)
             return query
 
         except recognize.WaitTimeoutError:
-            if speak_flag == 0 and gpt_in_use == 0:  #do not update the status if gpt is generating content or speaking
+            if speak_flag == 0 and gpt_in_use == 0:  # do not update the status if gpt is generating content or speaking
                 set_status("No speech detected.")
 
         except recognize.UnknownValueError:
-            if speak_flag == 0 and gpt_in_use == 0:  #do not update the status if gpt is generating content or speaking
+            if speak_flag == 0 and gpt_in_use == 0:  # do not update the status if gpt is generating content or speaking
                 set_status("Sorry, I couldn't understand what you said.")
             time.sleep(1)
 
         except recognize.RequestError as e:
             print(e)
-            messagebox.showinfo("Error","Please connect to internet")
+            messagebox.showinfo("Error", "Please connect to internet")
             time.sleep(1)
 
 
 def getinfo():
     f = open("User-data/info.txt", 'w')
     speak("please name me")
-    ai_name= simpledialog.askstring("Input", "Name Your AI: ")
-    if not(ai_name):
-        ai_name="GPT-5"
+    ai_name = simpledialog.askstring("Input", "Name Your AI: ")
+    if not ai_name:
+        ai_name = "GPT-5"
     speak("What should i call you?")
     name = simpledialog.askstring("Input", "Enter your Name: ")
-    if not(name):
-        name="User"
+    if not name:
+        name = "User"
     f.write(f"Name: {name}\nAiName: {ai_name}")
     f.close()
 
@@ -980,7 +981,7 @@ def save_chat(conversation):
     if not os.path.exists("Saved-Chats"):
         os.mkdir("Saved-Chats")
 
-    file_path = filedialog.asksaveasfilename(title="Save Chat",initialdir="Saved-Chats",confirmoverwrite=True,defaultextension=".txt")
+    file_path = filedialog.asksaveasfilename(title="Save Chat", initialdir="Saved-Chats", confirmoverwrite=True, defaultextension=".txt")
     file_name=os.path.basename(file_path)
 
     with open(f"Saved-Chats/{file_name}", "w") as f:
@@ -1000,7 +1001,6 @@ def gpt(Query,do=None):
         chat += f"{name}: {Query}\n{ai_name}:"
         Query = chat
 
-
         URL = 'https://api.openai.com/v1/chat/completions'
 
         payload = {
@@ -1016,14 +1016,17 @@ def gpt(Query,do=None):
 
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer YOUR_OPENAI_API_KEY"
+            "Authorization": f"Bearer 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"
+
+
+            # "Authorization": f"Bearer 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"
+
         }
 
-        if do=='analyze':
+        if do == 'analyze':
             set_status("Hang on! analysing the website Content")
             response = requests.post(URL, headers=headers, json=payload, stream=False)
-            gpt_in_use=0
-
+            gpt_in_use = 0
             return response, do, ai_name
 
         elif "generate some description" in Query:
@@ -1033,20 +1036,20 @@ def gpt(Query,do=None):
             set_status('Thinking...')
         response = requests.post(URL, headers=headers, json=payload, stream=False)
 
-        return response,do,ai_name
+        return response, do, ai_name
     except requests.exceptions.ConnectionError:
-        messagebox.showinfo("Error","Please connect to the Internet")
+        messagebox.showinfo("Error", "Please connect to the Internet")
         gpt_in_use = 0
 
     except Exception as e:
         print(e)
         gpt_in_use = 0
-def respond(Query,objects=None):
+def respond(Query, objects=None):
     global wait_time,chat,gpt_in_use
 
     try:
-        #get response from gpt
-        response,do,ai_name=gpt(Query)
+        # get response from gpt
+        response, do, ai_name = gpt(Query)
         # print(response)
         # response=json.loads(response.content.decode())
 
@@ -1067,16 +1070,16 @@ def respond(Query,objects=None):
             chat += f'{response}\n'
             # print(f"{ai_name} says:\n{response}")
             print(chat)
-            generate_label(response,'green','black',Ay)
+            generate_label(response,'green', 'black',Ay)
 
             speak(response)
             gpt_in_use = 0
 
-            return 'xyz',response
+            return 'xyz', response
     except:
         speak("server is busy please try after 20 minutes")
         set_status("server is busy please try after 20 minutes")
-        gpt_in_use=0
+        gpt_in_use = 0
 
 def update_ring(ring,stop_event):
     radius=130
@@ -1084,10 +1087,10 @@ def update_ring(ring,stop_event):
 
     while not stop_event.is_set():
         width = random.randint(1, 25)
-        radius=130+(width/2)
+        radius = 130+(width/2)
 
         ring.itemconfig(circle, width=width, outline="#4D4AC7")
-        ring.coords(circle, 555- radius, 249 - radius, 555 + radius, 244 + radius)
+        ring.coords(circle, 555 - radius, 249 - radius, 555 + radius, 244 + radius)
         ring.update()
         time.sleep(0.1)  # Adjust the sleep time as needed
     canvas.delete(circle)
@@ -1099,7 +1102,7 @@ def speak(text):
 
 def say(text):
     global speak_flag
-    #Threading to add Speaking effect
+    # Threading to add Speaking effect
     stop_event = threading.Event()
     threading.Thread(target=update_ring,args=(canvas,stop_event)).start()
 
@@ -1111,7 +1114,7 @@ def say(text):
         start_time = time.time()  # Get the start time
 
         while time.time() - start_time < wait_time:
-            if speak_flag==0:
+            if speak_flag == 0:
                 break
     else:
         wait_time = op_length / 17
@@ -1167,14 +1170,14 @@ class Assistant(threading.Thread):
     def run(self):
         # Split the string into words
         words = self.speech.lower()
-        words=words.split()
+        words = words.split()
         print(words)
 
         # Find the index of the specific word
         index = words.index("open")
 
         # Access the word after the specific word
-        self.app_name= words[index + 1]
+        self.app_name = words[index + 1]
 
         self.open_app(self.app_name)
         self.open_website(self.app_name)
@@ -1187,7 +1190,7 @@ def main():
     while not stop_flag.is_set():
         # print(speak_flag,", ", gpt_in_use)
 
-        if speak_flag == 0 and gpt_in_use == 0:  #do not Listen if gpt is generating content or speaking
+        if speak_flag == 0 and gpt_in_use == 0:  # do not Listen if gpt is generating content or speaking
 
             speech = command()
             compare(speech)
@@ -1206,9 +1209,6 @@ def compare(speech):
             print(f'\n\n{name}\n\n')
             respond(speech)
 
-        elif "capital of india" in speech.lower():
-            speak("Delhi is the capital of india")
-
         elif "save this conversation" in speech.lower():
             save_chat(chat)
 
@@ -1216,10 +1216,10 @@ def compare(speech):
             speak("I am recording. please Perform Your clicks precisely")
             start()
 
-        elif ("playback my actions" in speech.lower()) or("playback my action" in speech.lower()) or("repeat my action" in speech.lower())or("repeat my actions" in speech.lower()):
+        elif ("playback my actions" in speech.lower()) or ("playback my action" in speech.lower()) or ("repeat my action" in speech.lower()) or ("repeat my actions" in speech.lower()):
             playback()
 
-        elif ("generate description of image" in speech.lower()) or ("detect some object" in speech.lower()) or ("detect object" in speech.lower()) or ("detect some objects" in speech.lower()) :
+        elif ("generate description of image" in speech.lower()) or ("detect some object" in speech.lower()) or ("detect object" in speech.lower()) or ("detect some objects" in speech.lower()):
             generate_description()
 
         elif ("analyse a website" in speech.lower()) or ("analyse the website" in speech.lower()):
@@ -1228,35 +1228,33 @@ def compare(speech):
             newWin = Tk()
             # But make it invisible
             newWin.withdraw()
-            url = simpledialog.askstring("Input", "Enter the Url of website",parent=newWin)
+            url = simpledialog.askstring("Input", "Enter the Url of website", parent=newWin)
             # Destroy the temporary "parent"
             newWin.destroy()
             time.sleep(1)
             if url:
                 print("Hang on! analyzing the website contents")
                 path = os.getcwd()
-                threading.Thread(target=scrapper, args=(url,path,)).start()
+                threading.Thread(target=scrapper, args=(url, path,)).start()
             else:
-                messagebox.showinfo("GPT-5","No URL Provided")
+                messagebox.showinfo("GPT-5", "No URL Provided")
 
-        elif ("stop listening" in speech.lower()) or ("do not listen" in speech.lower()) or ("turn off your ears" in speech.lower()) :
+        elif ("stop listening" in speech.lower()) or ("do not listen" in speech.lower()) or ("turn off your ears" in speech.lower()):
             speak("Turning off my ears")
             stop_flag.set()
             set_status("I've closed my ears")
-
 
         elif "generate image" in speech.lower():
             prompt=speech.split("image of")
             threading.Thread(target=create_image,args=(prompt[1],),daemon=True).start()
 
-
         elif "open" in speech.lower():
-            assist=Assistant(speech)
+            assist = Assistant(speech)
             assist.start()
 
 
         elif "play" in speech.lower():
-            music=speech.split("play")
+            music = speech.split("play")
             start_music(music)
 
 
@@ -1273,14 +1271,14 @@ def compare(speech):
             window.destroy()
             exit()
         else:
-            no_wait,response=respond(speech)
-            if no_wait.lower()=='analyze'.lower():
+            no_wait,response = respond(speech)
+            if no_wait.lower() == 'analyze'.lower():
                 pass
             else:
                 op_length = len(response)
                 threading.Thread(target=wait_when_speaking,args=op_length)
 
-                if speak_flag == 0 and gpt_in_use == 0:  #do not update the status if gpt is generating content or speaking
+                if speak_flag == 0 and gpt_in_use == 0:  # do not update the status if gpt is generating content or speaking
                     set_status("IDEAL")
 
 
