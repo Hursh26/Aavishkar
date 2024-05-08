@@ -61,7 +61,7 @@ Contributions to Dexter are welcome! If you have any suggestions for improvement
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [Apache Lisence](LICENSE).
 
 ## Acknowledgments
 
