@@ -34,24 +34,24 @@ Once installed, Dexter can be used to perform various tasks on your desktop. Som
 
 Features and commands():
 - `Speech Recognition` using Speech Recognition Library.
-- Text to Voice Using Winspeech Library.
-- Response Generation Using Chat GPT.
+- `Text to Voice` Using Winspeech Library.
+- `Response Generation` Using Chat GPT.
   
-- `Image Recognition` using the YOLO v8 model.
+- `Image Recognition` using the YOLO v8 model.<br>
   Command: `Detect objects around me`
-- Image Generation using the DALLe Image generator.
+- Image Generation using the DALLe Image generator.<br>
   Command: `Generate image of <Your image description>`
-- Task Automation Using Keylogger for Task recording and playback for Task repetition.
+- Task Automation Using Keylogger for Task recording and playback for Task repetition.<br>
   Command: `Record my Actions` to start recording, `repeat my actions` to playback the recording
-- Saves the Conversation between dexter and User.
+- Saves the Conversation between dexter and User.<br>
   Command: `Save this conversation`
-- Access real-time website to analyze its content.
+- Access real-time website to analyze its content.<br>
   Command: `Analyze a website`
-- Opens requested apps and Websites.
+- Opens requested apps and Websites.<br>
   Command: `open <App name or website name`
-- Play User requested Music.
+- Play User requested Music.<br>
   Command: `play <song_name>`
--Stop Speaking or listening on user commands.
+-Stop Speaking or listening on user commands.<br>
   Command: `Stop Listening` to stop the speech recognition and `stop` to stop speaking
 
 
